@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>United MK — Market Performance Report</title>
+<style>
+  :root{
+    --ink:#1a2332; --ink2:#5b6b7f; --line:#e6eaf0; --bg:#f5f7fa; --card:#fff;
+    --good:#0e9f6e; --goodbg:#e6f7f1; --warn:#d97706; --warnbg:#fdf3e3; --bad:#dc2626; --badbg:#fdeaea;
+    --accent:#4f46e5; --accentbg:#eef0fe;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;padding:28px 14px}
+  .wrap{max-width:1100px;margin:0 auto}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:2px 0}
+  .sub{color:var(--ink2);font-size:13px;margin-bottom:16px}
+  /* market tabs */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .tab{padding:9px 16px;border-radius:99px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:13.5px;cursor:pointer;display:flex;gap:8px;align-items:center}
+  .tab .pct{font-size:11.5px;padding:1px 7px;border-radius:99px}
+  .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .tab.active .pct{background:rgba(255,255,255,.25);color:#fff !important}
+  h2{font-size:17px;font-weight:700;margin-bottom:4px}
+  .sect{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+  .desc{color:var(--ink2);font-size:12.5px;margin-bottom:12px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .kpi .label{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink2);font-weight:600}
+  .kpi .value{font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .kpi .delta{font-size:11.5px;font-weight:600}
+  .up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--warn)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2);padding:7px 9px;border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;white-space:nowrap}
+  .pill.good{background:var(--goodbg);color:var(--good)}
+  .pill.warn{background:var(--warnbg);color:var(--warn)}
+  .pill.bad{background:var(--badbg);color:var(--bad)}
+  .bar{height:6px;background:#edf0f5;border-radius:99px;overflow:hidden;min-width:70px}
+  .bar i{display:block;height:100%;border-radius:99px}
+  .name{font-weight:700}
+  .mini{font-size:11.5px;color:var(--ink2)}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:880px){.cols{grid-template-columns:1fr}}
+  /* focus */
+  .focus{background:linear-gradient(135deg,#312e81,#4f46e5);color:#fff;border-radius:14px;padding:20px 22px;margin-bottom:16px}
+  .focus h2{color:#fff;display:flex;align-items:center;gap:8px}
+  .focus .desc{color:#c7d2fe}
+  .fitem{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.15);font-size:13.5px}
+  .fitem:last-child{border-bottom:none}
+  .fnum{flex:0 0 22px;height:22px;border-radius:99px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11.5px}
+  .fitem b{color:#fde68a}
+  footer{color:var(--ink2);font-size:11.5px;text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">United MK &middot; RT BDI &middot; Metro by T-Mobile</div>
+  <h1>Market Performance Report</h1>
+  <div class="sub" id="gensub"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="content"></div>
+  <footer>Source: RT POS BDI (myrtpos.com) &middot; Trending = MTD pace projected to month-end &middot; Attainment = projected month-end vs monthly quota. Hours-worked data may be incomplete in some markets.</footer>
+</div>
+<script>
+// ===DATA-START=== (regenerated each run — replace this block only)
+const GEN = {date:"June 10, 2026", time:"1:45 PM", refreshed:"06/10/2026 12:46 PM", dayOfMonth:10, daysInMonth:30};
+const DATA = {
+"ALBUQUERQUE":{
+ meta:{doors:14, ppd:46, apd:1334.73, conv:93.9, proj:1965, accProj:56613},
+ mom:{tot:[726,655], acc:[17985,18871]},
+ stores:[
+  ["TTLNM4000N","4000 Central/Atrisco",260,80,92.3,10320,1951,56.7,39.69,24.39],
+  ["TTLNM800N","800 Juan Tabo/Manzano",120,54,135.0,4760,940,59.2,39.67,17.40],
+  ["TTLNM1625N","1625 Rio Bravo",160,54,101.3,6360,635,29.9,39.75,11.75],
+  ["TTLNM1319","1319 N Prince",162,52,96.3,6080,2400,118.4,37.53,46.16],
+  ["TTLNM8922N","8922 Central/Wyoming",275,52,56.7,10840,980,27.1,39.42,18.84],
+  ["TTLNM3055N","3055 Coors/Barcelona",260,51,58.8,10120,726,21.5,38.92,14.23],
+  ["TTLNM1208","1208 W. 21st/Dollar",150,50,100.0,5600,3247,174.0,37.33,64.95],
+  ["TTLNM301N","301 San Pedro",220,49,66.8,8640,1240,43.0,39.27,25.30],
+  ["TTLNM4408N","4408 Menaul",140,47,100.7,5400,465,25.8,38.57,9.89],
+  ["TTLNM4500N","4500 4th",160,44,82.5,6160,830,40.4,38.50,18.86],
+  ["TTLNM803N","803 California St",100,36,108.0,3720,545,43.9,37.20,15.13],
+  ["TTLNM1401","1401 N Turner",206,29,42.2,7840,3760,143.9,38.06,129.64],
+  ["TTLNM929N","929 Sunset",115,27,70.4,4560,560,36.8,39.65,20.73],
+  ["TTLNM825N","825 Coors/Fortuna",95,24,75.8,3720,410,33.1,39.16,17.08]],
+ today:{"TTLNM4000N":4,"TTLNM3055N":1,"TTLNM800N":1,"TTLNM803N":1,"TTLNM8922N":1},
+ emps:{avgBox:12.7, avgAcc:449,
+  top:[["Karan",110.2,45,3247,197.8,27],["Rayyan",72.8,23,3745,308.7,94],["Jocelyn",71.1,33,1311,154.6,35],["Mohammed",125.0,27,1540,151.9,43]],
+  close:[["Juan",67.5,9,133],["Luis Gael",47.1,3,233],["Malakai",34.8,5,120],["Irving",39.1,5,80],["Perla",47.0,1,200],["Judith",30.5,2,100],["Briana",28.3,0,0],["Nancy",79.5,0,0]],
+  attach:[["Donny",22,54.6,285],["Brenda",18,55.6,290],["Clarissa Flores",14,57.1,190],["Beverly",17,47.1,260],["Joe",13,46.2,195],["Oscar David Segovia",17,29.4,95],["Alexis",14,35.7,160],["Lizseth",17,17.7,80]],
+  zero:[["Nancy",79.5,0],["Briana",28.3,13]]}
+},
+"DALLAS":{
+ meta:{doors:27, ppd:39, apd:1584.32, conv:52.1, proj:3249, accProj:129490},
+ mom:{tot:[1247,1083], acc:[56111,43163]},
+ stores:[
+  ["TTLTX3515A","Sycamore",300,88,88,13000,2974,68.6,43.33,33.80],
+  ["TTLTX6155S","Samuel",300,88,88,19000,2464,38.9,63.33,28.00],
+  ["TTLTX1308A","Haltom",300,86,86,19500,4876,75,65.00,56.69],
+  ["TTLTX3611A","Beltline",420,67,47.9,7000,3417,146.4,16.67,50.99],
+  ["TTLTX1352M","Montfort",350,64,54.9,15000,1294,25.9,42.86,20.22],
+  ["TTLTX3630S","Rosedale",215,63,87.9,12500,1910,45.8,58.14,30.32],
+  ["TTLTX1032S","Ferguson",215,61,85.1,12500,4586,110.1,58.14,75.17],
+  ["TTLTX1117A","6th",300,53,53,13000,1936,44.7,43.33,36.53],
+  ["TTLTX9112A","Camp Bowie",150,51,102,9000,2300,76.7,60.00,45.10],
+  ["TTLTX2809","Motley",300,42,42,22000,2145,29.3,73.33,51.08],
+  ["TTLTX6650A","Beach Western",125,40,96,7000,1504,64.5,56.00,37.60],
+  ["TTLTX724A","Lewisville",150,38,76,8000,2290,85.9,53.33,60.25],
+  ["TTLTX4519","Matlock",150,34,68,9000,1060,35.3,60.00,31.19],
+  ["TTLTX2410","Green Oaks",150,34,68,10000,1336,40.1,66.67,39.29],
+  ["TTLTX1414","West Pioneer",250,33,39.6,15000,963,19.3,60.00,29.19],
+  ["TTLTX450S","FM Round Grove",150,31,62,9500,1714,54.1,63.33,55.30],
+  ["TTLTX2205A","I-20",100,29,87,6000,243,12.1,60.00,8.38],
+  ["TTLTX2636","Frankford New",250,28,33.6,12500,662,15.9,50.00,23.65],
+  ["TTLTX2901A","Western Center",125,25,60,6500,959,44.2,52.00,38.34],
+  ["TTLTX1208D","Decatur",45,21,140,6000,576,28.8,133.33,27.44],
+  ["TTLTX10777","Harry Hines",150,21,42,10000,1225,36.8,66.67,58.34],
+  ["TTLTX4679","SH-121",54,17,94.4,3000,570,57,55.56,33.52],
+  ["TTLTX510","Frontage",160,17,31.9,12000,1445,36.1,75.00,84.98],
+  ["TTLTX3634","Jacksboro",150,16,32,10000,125,3.7,66.67,7.81],
+  ["TTLTX4133","Broadway",150,16,32,7000,475,20.4,46.67,29.69],
+  ["TTLTX3110","3110 Midwestern",55,12,65.5,1500,45,9,27.27,3.75],
+  ["TTLTX6805","North Main",47,8,51.1,3500,70,6,74.47,8.75]],
+ today:{"TTLTX450S":6,"TTLTX6155S":3,"TTLTX1308A":1,"TTLTX1352M":1,"TTLTX1414":1,"TTLTX2809":1,"TTLTX2901A":1,"TTLTX3611A":1,"TTLTX3630S":1,"TTLTX4519":1,"TTLTX4679":1,"TTLTX9112A":1},
+ emps:{avgBox:11.4, avgAcc:756,
+  top:[["Sai",89.2,34,3481,252.9,38],["Sameer",91.2,24,3427,270.8,53],["gerardo",79.6,20,1685,280,72],["Edoardo",79.5,23,2319,239.1,34]],
+  close:[["Saniya",53.2,6,417],["Bader",58.8,8,300],["ASHISH",50.1,7,286],["Osama",87.6,10,150],["Babu",77.6,7,200],["Saitharun",81.6,9,133],["Marco Antonio",86.9,7,157],["Shaikh",84.6,7,157]],
+  attach:[["Leo",19,52.6,243],["JAMES",10,0,40]],
+  zero:[]}
+},
+"HOUSTON":{
+ meta:{doors:17, ppd:37, apd:715.61, conv:43.3, proj:1908, accProj:36496},
+ mom:{tot:[792,636], acc:[15685,12165]},
+ stores:[
+  ["TTLTX911","Federal New",450,78,52,18000,2288,38.1,40.00,29.33],
+  ["TTLTX919A","919 Freeport",280,54,57.9,12000,1160,29,42.86,21.48],
+  ["TTLTX900","900 S Wayside",180,51,85,6000,1018,50.9,33.33,19.96],
+  ["TTLTX7003","7003 Harrisburg",150,51,102,6000,833,41.6,40.00,16.33],
+  ["TTLTX6868","6868 Spencer Hwy",220,50,68.2,10000,898,26.9,45.45,17.96],
+  ["TTLTX4720A","4720 Aldine Mail",110,49,133.6,4500,685,45.6,40.91,13.97],
+  ["TTLTX9453A","Kempwood",350,47,40.3,25000,409,4.9,71.43,8.69],
+  ["TTLTX803A","75th",250,43,51.6,6000,660,33,24.00,15.36],
+  ["TTLTX14232","14232 State Hwy 249",300,40,40,10000,653,19.6,33.33,16.32],
+  ["TTLTX4717A","4717 Telephone Rd",200,35,52.5,12000,458,11.4,60.00,13.08],
+  ["TTLTX739A","739 Mt. Houston",150,27,54,5000,767,46,33.33,28.40],
+  ["TTLTX1305A","13053 FM529",120,23,57.5,7000,624,26.8,58.33,27.14],
+  ["TTLTX10153","Hammerly",150,21,42,6000,665,33.2,40.00,31.66],
+  ["TTLTX15507","Post Oak",350,21,18,6000,50,2.5,17.14,2.38],
+  ["TTLTX10815","Wilcrest",120,19,47.5,4500,175,11.7,37.50,9.21],
+  ["TTLTX8514","C E King Wireless",100,14,42,3000,362,36.2,30.00,25.85],
+  ["TTLTX8788A","New Hammerly",105,13,37.1,9000,463,15.4,85.71,35.59]],
+ today:{"TTLTX8788A":2,"TTLTX919A":2,"TTLTX10153":1,"TTLTX4717A":1,"TTLTX9453A":1},
+ emps:{avgBox:11.8, avgAcc:329,
+  top:[["ARELI",66.7,23,920,160.9,52],["Larin",60.4,25,870,140,55],["Nimer",59.1,20,1015,165,86],["Rosa",58.0,26,721,126.9,77]],
+  close:[["Hafeezullah",85.3,12,208],["Cipriana Mireya",35.5,5,180],["Amish",58.6,6,100],["Angela Guadalupe",53.4,0,0]],
+  attach:[["Lorena",24,50,337],["Suhail",20,50,275],["Akbar",12,0,82],["SAF",11,0,25]],
+  zero:[["Angela Guadalupe",53.4,0]]}
+},
+"KANSAS CITY":{
+ meta:{doors:15, ppd:53, apd:1734.44, conv:49.7, proj:2406, accProj:78050},
+ mom:{tot:[868,802], acc:[19539,26017]},
+ stores:[
+  ["TTLKS3709A","Noland",300,119,119,18000,5027,83.8,60.00,42.24],
+  ["TTLKS2201A","2201 Metropolitan",300,91,91,18000,3048,50.8,60.00,33.49],
+  ["TTLKS101","101 Hardesty",205,64,93.7,6000,2240,112,29.27,34.99],
+  ["TTLKS2694","2694 Vivion",300,61,61,15000,1639,32.8,50.00,26.86],
+  ["TTLKS1622","1622 Central",360,55,45.8,18000,322,5.4,50.00,5.85],
+  ["TTLKS4513A","4513 Independence",300,54,54,12000,1979,49.5,40.00,36.64],
+  ["TTLKS2605","2600 Independence",220,53,72.3,10000,2119,63.6,45.45,39.98],
+  ["TTLKS3201A","3201 State",200,48,72,7500,645,25.8,37.50,13.43],
+  ["TTLKS4710A","4710 Parallel",170,47,82.9,6800,1471,64.9,40.00,31.29],
+  ["TTLKS909","909 Minnesota",160,45,84.4,8000,2181,81.8,50.00,48.47],
+  ["TTLKS6301","6301 Main",110,41,111.8,2000,1157,173.5,18.18,28.21],
+  ["TTLKS7700","7700 Parallel",140,41,87.9,8000,1404,52.7,57.14,34.25],
+  ["TTLKS10808","10808 23rd",200,39,58.5,12000,1716,42.9,60.00,44.01],
+  ["TTLKS2920","2920 4th",130,25,57.7,5200,694,40,40.00,27.74],
+  ["TTLKS5218","Truman",200,19,28.5,2000,377,56.5,10.00,19.84]],
+ today:{"TTLKS2694":6,"TTLKS3709A":6,"TTLKS2201A":1},
+ emps:{avgBox:12.9, avgAcc:650,
+  top:[["Shayan",3.8,54,3449,233.3,108],["Harry",20.9,10,1774,550,34],["Lauren",73.4,19,1198,242.1,45],["Ashmal",85.7,24,1317,187.5,28]],
+  close:[["Juana",62.0,8,313],["Aziz",79.1,6,267],["Nahomy",59.6,8,200],["Anjel Veronica",27.6,2,300],["GHAIB",25.9,3,133]],
+  attach:[["Estefania",12,41.7,145],["Rita",11,45.5,190],["Alia",11,36.4,102],["aakash",18,16.7,84]],
+  zero:[]}
+},
+"WEST TEXAS":{
+ meta:{doors:6, ppd:35, apd:809.77, conv:70.3, proj:633, accProj:14576},
+ mom:{tot:[217,211], acc:[6036,4859]},
+ stores:[
+  ["TTLTX2449","2449 34th/Gold",201,48,71.6,7640,768,30.1,38.01,16.00],
+  ["TTLTX1803","1803 7th St",194,44,68,7360,862,35.1,37.94,19.58],
+  ["TTLTX2145","2145 50th/Happy",199,39,58.8,7560,830,32.9,37.99,21.28],
+  ["TTLTX1608","1608 W 5th/PV24",159,29,54.7,5960,1070,53.8,37.48,36.88],
+  ["TTLTX1814","1814 Avenue Q",169,29,51.5,6360,542,25.6,37.63,18.68],
+  ["TTLTX7412","7412 University",126,22,52.4,4640,788,50.9,36.83,35.81]],
+ today:{},
+ emps:{avgBox:10.1, avgAcc:270,
+  top:[["Veronica",54.0,22,660,104.6,40],["CHRISTINA",45.0,6,540,300,16],["Matthew",57.4,9,488,188.9,15],["Jarius",45.3,15,390,93.3,28]],
+  close:[["CHRISTINA",45.0,6,300],["Jonathan",51.2,7,143],["Robbie Ann",40.9,5,100],["Dangelo Vann",48.5,4,75],["Ezekiel Elias",58.0,1,100]],
+  attach:[["SIMIOLUWA",12,58.3,197]],
+  zero:[]}
+},
+"WICHITA":{
+ meta:{doors:6, ppd:26, apd:1080.46, conv:80.7, proj:477, accProj:19448},
+ mom:{tot:[241,159], acc:[4364,6483]},
+ stores:[
+  ["TTLKS240","240 West",200,58,87,10000,2509,75.3,50.00,43.26],
+  ["TTLKS2039","2039 21st",130,30,69.2,5120,1265,74.1,39.38,42.15],
+  ["TTLKS4900","4900 East Pawnee",100,25,75,3840,837,65.4,38.40,33.48],
+  ["TTLKS2811","2811 Hydraulic",120,21,52.5,4640,1041,67.3,38.67,49.58],
+  ["TTLKS7320","7320 Central/Ridge",130,17,39.2,5000,741,44.5,38.46,43.59],
+  ["TTLKS2559","2559 West Pawnee",140,8,17.1,5400,90,5,38.57,11.25]],
+ today:{"TTLKS2039":3},
+ emps:{avgBox:14.4, avgAcc:926,
+  top:[["Rizwan",84.7,17,1536,282.4,29],["Zain",87.4,22,1265,195.5,16],["Syed Imad",62.7,18,1275,233.3,24],["Hassan",83.5,16,837,206.3,27]],
+  close:[["Abrar Ahmed",85.3,10,250],["Sonia",39.4,1,300]],
+  attach:[],
+  zero:[]}
+}
+};
+// ===DATA-END===
+
+const fmt$=n=>'$'+Math.round(n).toLocaleString();
+const pct=n=>Math.round(n)+'%';
+function attain(m){const aq=m.stores.reduce((s,r)=>s+r[2],0);const cq=m.stores.reduce((s,r)=>s+r[5],0);return {actQ:aq,accQ:cq,act:m.meta.proj/aq*100,acc:m.meta.accProj/cq*100,mtd:m.stores.reduce((s,r)=>s+r[3],0),mtdAcc:m.stores.reduce((s,r)=>s+r[6],0)};}
+function cls(p){return p>=90?'good':(p>=70?'warn':'bad')}
+function barCls(p){return p>=90?'g':(p>=70?'w':'b')}
+
+function focusItems(name,m,a){
+  const out=[]; const daysLeft=GEN.daysInMonth-GEN.dayOfMonth;
+  const dark=m.stores.filter(r=>r[3]===0&&r[2]>0);
+  const zeroToday=m.stores.filter(r=>r[3]>0&&!m.today[r[0]]&&r[4]<70).sort((x,y)=>x[4]-y[4]).slice(0,4);
+  const blitz=m.stores.filter(r=>r[4]>=85&&r[7]<60).slice(0,4);
+  const gap=Math.max(0,a.actQ-a.mtd);
+  if(a.act<95) out.push(`Market is pacing <b>${pct(a.act)}</b> to activation quota — ${gap.toLocaleString()} boxes still needed (~<b>${Math.ceil(gap/Math.max(1,daysLeft))}/day</b>). Every door needs a closing push before close tonight.`);
+  if(zeroToday.length) out.push(`<b>No boxes on the board yet today</b> at the biggest-gap stores: ${zeroToday.map(r=>'<b>'+r[1]+'</b> ('+pct(r[4])+' to quota)').join(', ')}. Call these DMs/managers first.`);
+  if(blitz.length) out.push(`Accessory push this afternoon at stores that close boxes but skip attach: ${blitz.map(r=>'<b>'+r[1]+'</b> ('+pct(r[7])+' acc quota)').join(', ')}.`);
+  if(dark.length) out.push(`Zero production MTD at: ${dark.map(r=>'<b>'+r[1]+'</b>').join(', ')} — verify open/staffed today or reallocate quota.`);
+  if(m.emps.zero.length) out.push(`Check in on ${m.emps.zero.map(e=>'<b>'+e[0]+'</b> ('+e[1]+' hrs, 0 boxes'+(e[2]?', '+e[2]+' payments':'')+')').join(', ')} — convert their floor time into sales today.`);
+  if(m.emps.top.length) out.push(`Shout out <b>${m.emps.top[0][0]}</b> (${m.emps.top[0][2]} boxes, ${fmt$(m.emps.top[0][3])} accessory) on the market chat — set the tone for the afternoon.`);
+  return out;
+}
+
+function render(name){
+  const m=DATA[name], a=attain(m), c=document.getElementById('content');
+  const momA=(m.mom.tot[1]-m.mom.tot[0])/m.mom.tot[0]*100, momC=(m.mom.acc[1]-m.mom.acc[0])/m.mom.acc[0]*100;
+  const stores=[...m.stores].sort((x,y)=>y[4]-x[4]);
+  let h='';
+  // FOCUS
+  h+='<div class="focus"><h2>⚡ Focus for the rest of today — '+name+'</h2><div class="desc">Generated '+GEN.date+' '+GEN.time+' · acts on the board today: '+Object.values(m.today).reduce((s,v)=>s+v,0)+'</div>';
+  focusItems(name,m,a).forEach((f,i)=>{h+='<div class="fitem"><div class="fnum">'+(i+1)+'</div><div>'+f+'</div></div>'});
+  h+='</div>';
+  // KPIs
+  h+='<div class="kpis">';
+  h+=kpi('MTD Activations',a.mtd.toLocaleString(),(momA<0?'▼ ':'▲ ')+Math.abs(momA).toFixed(1)+'% vs May pace',momA<0?'down':'up');
+  h+=kpi('Act. Attainment (proj)',pct(a.act),m.meta.proj.toLocaleString()+' proj vs '+a.actQ.toLocaleString()+' quota',a.act>=90?'up':(a.act>=70?'flat':'down'));
+  h+=kpi('MTD Accessory',fmt$(a.mtdAcc),(momC<0?'▼ ':'▲ ')+Math.abs(momC).toFixed(1)+'% vs May pace',momC<0?'down':'up');
+  h+=kpi('Acc. Attainment (proj)',pct(a.acc),fmt$(m.meta.accProj)+' proj vs '+fmt$(a.accQ)+' quota',a.acc>=90?'up':(a.acc>=70?'flat':'down'));
+  h+=kpi('Acts / Door',m.meta.ppd,m.meta.doors+' producing doors','flat');
+  h+=kpi('Qpay Conversion',m.meta.conv+'%','company avg 55.7%',m.meta.conv>=55.7?'up':'down');
+  h+='</div>';
+  // STORES
+  h+='<div class="sect"><h2>Store scorecard</h2><div class="desc">MTD vs monthly quota, projected to month-end. Sorted by activation attainment.</div><table><tr><th>Store</th><th class="num">MTD</th><th class="num">Today</th><th class="num">Act. vs Quota</th><th style="width:13%"></th><th class="num">Acc. vs Quota</th><th class="num">APH (target)</th></tr>';
+  stores.forEach(r=>{
+    const dark=r[3]===0;
+    h+='<tr><td class="name">'+r[1]+(dark?' <span class="pill bad">no production</span>':'')+'</td><td class="num">'+r[3]+'</td><td class="num">'+(m.today[r[0]]||0)+'</td><td class="num"><span class="pill '+cls(r[4])+'">'+pct(r[4])+'</span></td><td><div class="bar"><i class="'+barCls(r[4])+'" style="width:'+Math.min(100,r[4])+'%"></i></div></td><td class="num"><span class="pill '+cls(r[7])+'">'+pct(r[7])+'</span></td><td class="num">$'+r[9].toFixed(2)+' <span class="mini">($'+r[8].toFixed(0)+')</span></td></tr>';
+  });
+  h+='</table></div>';
+  // EMPLOYEES
+  h+='<div class="cols">';
+  h+='<div class="sect"><h2>🏆 Recognize</h2><div class="desc">Market avgs: '+m.emps.avgBox+' boxes · '+fmt$(m.emps.avgAcc)+' accessory per rep (MTD)</div><table><tr><th>Employee</th><th class="num">Boxes</th><th class="num">Acc $</th><th class="num">Attach</th><th class="num">Payments</th></tr>';
+  m.emps.top.forEach(e=>{h+='<tr><td class="name">'+e[0]+'</td><td class="num">'+e[2]+'</td><td class="num">'+fmt$(e[3])+'</td><td class="num"><span class="pill good">'+e[4]+'%</span></td><td class="num">'+e[5]+'</td></tr>'});
+  h+='</table></div>';
+  h+='<div class="sect"><h2>🎯 Train / coach</h2><div class="desc">Closing track = low boxes for hours worked · Attach track = boxes OK, accessories skipped</div>';
+  if(m.emps.close.length){h+='<table><tr><th>Closing track</th><th class="num">Hrs</th><th class="num">Boxes</th><th class="num">Attach</th></tr>';m.emps.close.forEach(e=>{h+='<tr><td class="name">'+e[0]+'</td><td class="num">'+e[1]+'</td><td class="num">'+e[2]+'</td><td class="num">'+e[3]+'%</td></tr>'});h+='</table><br>'}
+  if(m.emps.attach.length){h+='<table><tr><th>Attach track</th><th class="num">Boxes</th><th class="num">Attach</th><th class="num">Acc $</th></tr>';m.emps.attach.forEach(e=>{h+='<tr><td class="name">'+e[0]+'</td><td class="num">'+e[1]+'</td><td class="num"><span class="pill bad">'+e[2]+'%</span></td><td class="num">'+fmt$(e[3])+'</td></tr>'});h+='</table>'}
+  if(!m.emps.close.length&&!m.emps.attach.length){h+='<div class="mini">No flagged coaching candidates this period.</div>'}
+  h+='</div></div>';
+  c.innerHTML=h;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.m===name));
+}
+function kpi(l,v,d,dir){return '<div class="kpi"><div class="label">'+l+'</div><div class="value">'+v+'</div><div class="delta '+dir+'">'+d+'</div></div>'}
+
+document.getElementById('gensub').textContent='Generated '+GEN.date+' at '+GEN.time+' · RT BDI data refreshed '+GEN.refreshed+' · June 1–'+GEN.dayOfMonth+' MTD vs monthly quota';
+const tabs=document.getElementById('tabs');
+Object.keys(DATA).forEach(name=>{
+  const a=attain(DATA[name]);
+  const b=document.createElement('button');b.className='tab';b.dataset.m=name;
+  b.innerHTML=name+' <span class="pct pill '+cls(a.act)+'">'+pct(a.act)+'</span>';
+  b.onclick=()=>render(name);
+  tabs.appendChild(b);
+});
+render('ALBUQUERQUE');
+</script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
